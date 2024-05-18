@@ -10,7 +10,7 @@
   <p v-if="loading">Loading...</p>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
 
 const code = ref("");
@@ -18,28 +18,33 @@ const convertedCode = ref(``);
 const loading = ref(false);
 const formattedCode = ref(``);
 
-const formatCode = (code) => {
+const formatCode = (code: string) => {
   return code.replace(/```vue/g, "").replace(/```/g, "");
 };
 
-const convert = () => {
+const convert = async () => {
   loading.value = true;
-  fetch("http://localhost:3333/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ code: code.value }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      convertedCode.value = data.response.choices[0].message.content;
-      loading.value = false;
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      loading.value = false;
+  try {
+    const response = await fetch("http://localhost:3333/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code: code.value }),
     });
+    
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    
+    const data = await response.json();
+    convertedCode.value = data.response.choices[0].message.content;
+  } catch (error) {
+    console.error("Error:", error);
+    // Provide user-friendly feedback here
+  } finally {
+    loading.value = false;
+  }
 };
 
 watch(convertedCode, (newValue) => {
