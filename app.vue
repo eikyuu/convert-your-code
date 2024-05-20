@@ -2,6 +2,7 @@
 
 <section class="text-gray-600 body-font">
   <h1 class="text-center mt-10">Convertir le code Vue API options en code Vue API de compositions</h1>
+  <div v-if="loading">Loading...</div>
 
   <div class="flex p-10 justify-between">
     <form class="w-1/2 space-y-6 pr-5" @submit="onSubmit">
@@ -15,13 +16,12 @@
       </FormField>
       <Button type="submit"> Convertir </Button>
     </form>
-    <pre class="w-1/2 pl-5">
+    <pre class="w-full pl-5">
     <code>
       {{ formattedCode }}
     </code>
   </pre>
   </div>
-  <div v-if="loading">Loading...</div>
 </section>
 </template>
 
@@ -124,7 +124,6 @@ const sendCodeConvertToChatGPT = async (code: string) => {
 
             N'oublie pas le template si nécessaire.
             Garde l'ordre des éléments dans le code.
-            Garde le coode aussi simple que possible.
 
            Fournis uniquement le code converti en réponse, sans aucun texte supplémentaire.`,
           },
