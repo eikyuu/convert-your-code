@@ -3,8 +3,8 @@
 <section class="text-gray-600 body-font">
   <h1 class="text-center mt-10">Convertir le code Vue API options en code Vue API de compositions</h1>
 
-  <div class="flex p-10 ">
-    <form class="w-1/2 space-y-6" @submit="onSubmit">
+  <div class="flex p-10 justify-between">
+    <form class="w-1/2 space-y-6 pr-5" @submit="onSubmit">
       <FormField v-slot="{ componentField }" name="code">
         <FormItem>
           <FormControl>
@@ -15,7 +15,7 @@
       </FormField>
       <Button type="submit"> Convertir </Button>
     </form>
-    <pre class="w-1/2">
+    <pre class="w-1/2 pl-5">
     <code>
       {{ formattedCode }}
     </code>
