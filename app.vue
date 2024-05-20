@@ -1,6 +1,6 @@
 <template>
   <textarea v-model="code" rows="10" cols="50"></textarea>
-  <button @click="convert">Convertir</button>
+  <button @click="sendCodeConvertToChatGPT">Convertir</button>
 
   <pre>
       <code>
@@ -12,6 +12,8 @@
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import axios from 'axios';
+const config = useRuntimeConfig()
 
 const code = ref("");
 const convertedCode = ref(``);
@@ -22,23 +24,79 @@ const formatCode = (code: string) => {
   return code.replace(/```vue/g, "").replace(/```/g, "");
 };
 
-const convert = async () => {
+const sendCodeConvertToChatGPT = async () => {
   loading.value = true;
   try {
-    const response = await fetch("http://localhost:3333/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await axios.post("https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: `
+            tu es un expert en développement web avec vuejs et nuxtjs.
+            Convertis le code Vue.js ou Nuxt.js utilisant l'API options en utilisant l'API de compositions avec le <script setup lang="ts">.
+            Assure-toi d'inclure si nécessaire l'interface Props suivante en adaptant le code en conséquence:
+             
+            interface Props {
+              msg?: string
+              labels?: string[]
+              title?: String
+              likes?: Number
+              count?: Number
+            }
+            
+            Utile la déclaration basée sur le type.
+
+            Utilise également les fonctions suivantes comme exemple en les adaptant si nécessaire au code fourni:
+
+            Si besoin de props sans valeur par défaut:
+
+            const props = defineProps<{
+              foo: string
+              bar?: number
+            }>()
+
+            Si besoin de props avec valeur par défaut:
+          
+            withDefaults(defineProps<Props>(), {
+              msg: 'hello',
+              labels: () => ['one', 'two'],
+              count: () => 0,
+              title: () => 'toto'
+            }) 
+            
+            si besoin de watch et onMounted:
+            watch(count, (newCount) => {
+              // yes, console.log() is a side effect
+              console.log(\`new count is: \${newCount}\`)
+            })
+            
+            onMounted(() => {
+              message.value = 'on mounted'
+            })
+            
+            si besoin de ref:
+            ref('Hello World!')
+
+           Fournis uniquement le code converti en réponse, sans aucun texte supplémentaire.`,
+
+          },
+          {
+            role: "user",
+            content: code.value,
+          },
+        ],
       },
-      body: JSON.stringify({ code: code.value }),
-    });
-    
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    
-    const data = await response.json();
-    convertedCode.value = data.response.choices[0].message.content;
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${config.public.apiKey}`,
+        },
+      }
+    );
+
+    convertedCode.value = response.data.choices[0].message.content;
   } catch (error) {
     console.error("Error:", error);
     // Provide user-friendly feedback here
@@ -47,8 +105,19 @@ const convert = async () => {
   }
 };
 
+
+
 watch(convertedCode, (newValue) => {
   formattedCode.value = formatCode(newValue);
+});
+
+onMounted(() => {
+  code.value = `function withDefaults(defineProps<Props>(), {
+    msg: 'hello',
+    labels: () => ['one', 'two'],
+    count: () => 0,
+    title: () => 'toto'
+  })`;
 });
 </script>
 
@@ -64,5 +133,4 @@ pre {
   border-radius: 5px;
   margin-top: 20px;
 }
-
 </style>
