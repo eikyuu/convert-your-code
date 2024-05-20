@@ -1,21 +1,63 @@
 <template>
-  <textarea v-model="code" rows="10" cols="50"></textarea>
-  <button @click="sendCodeConvertToChatGPT">Convertir</button>
 
-  <pre>
-      <code>
-        {{ formattedCode }}
-      </code>
-    </pre>
+<section class="text-gray-600 body-font">
+  <h1 class="text-center mt-10">Convertir le code Vue API options en code Vue API de compositions</h1>
+
+  <div class="flex p-10 ">
+    <form class="w-1/2 space-y-6" @submit="onSubmit">
+      <FormField v-slot="{ componentField }" name="code">
+        <FormItem>
+          <FormControl>
+            <Textarea placeholder="code à convertir" class="h-64" v-bind="componentField" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      </FormField>
+      <Button type="submit"> Convertir </Button>
+    </form>
+    <pre class="w-1/2">
+    <code>
+      {{ formattedCode }}
+    </code>
+  </pre>
+  </div>
   <p v-if="loading">Loading...</p>
+</section>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import axios from 'axios';
-const config = useRuntimeConfig()
+import { toTypedSchema } from "@vee-validate/zod";
+import * as z from "zod";
+import axios from "axios";
+import { useForm } from "vee-validate";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
-const code = ref("");
+const formSchema = toTypedSchema(
+  z.object({
+    code: z.string().min(10, {
+      message: "Code must be at least 10 characters long.",
+    }),
+  })
+);
+
+const { handleSubmit } = useForm({
+  validationSchema: formSchema,
+});
+
+const onSubmit = handleSubmit((values) => {
+  console.log(values.code);
+  sendCodeConvertToChatGPT(values.code);
+});
+const config = useRuntimeConfig();
+
 const convertedCode = ref(``);
 const loading = ref(false);
 const formattedCode = ref(``);
@@ -24,10 +66,11 @@ const formatCode = (code: string) => {
   return code.replace(/```vue/g, "").replace(/```/g, "");
 };
 
-const sendCodeConvertToChatGPT = async () => {
+const sendCodeConvertToChatGPT = async (code: string) => {
   loading.value = true;
   try {
-    const response = await axios.post("https://api.openai.com/v1/chat/completions",
+    const response = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
       {
         model: "gpt-3.5-turbo",
         messages: [
@@ -79,12 +122,15 @@ const sendCodeConvertToChatGPT = async () => {
             si besoin de ref:
             ref('Hello World!')
 
-           Fournis uniquement le code converti en réponse, sans aucun texte supplémentaire.`,
+            N'oublie pas le template si nécessaire.
+            Garde l'ordre des éléments dans le code.
+            Garde le coode aussi simple que possible.
 
+           Fournis uniquement le code converti en réponse, sans aucun texte supplémentaire.`,
           },
           {
             role: "user",
-            content: code.value,
+            content: code,
           },
         ],
       },
@@ -105,19 +151,8 @@ const sendCodeConvertToChatGPT = async () => {
   }
 };
 
-
-
 watch(convertedCode, (newValue) => {
   formattedCode.value = formatCode(newValue);
-});
-
-onMounted(() => {
-  code.value = `function withDefaults(defineProps<Props>(), {
-    msg: 'hello',
-    labels: () => ['one', 'two'],
-    count: () => 0,
-    title: () => 'toto'
-  })`;
 });
 </script>
 
