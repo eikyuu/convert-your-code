@@ -21,7 +21,7 @@
     </code>
   </pre>
   </div>
-  <p v-if="loading">Loading...</p>
+  <div v-if="loading">Loading...</div>
 </section>
 </template>
 
