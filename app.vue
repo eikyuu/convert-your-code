@@ -1,28 +1,54 @@
 <template>
 
-<section class="text-gray-600 body-font">
-  <h1 class="text-center mt-10">Convertir le code Vue API options en code Vue API de compositions</h1>
-  <div v-if="loading">Loading...</div>
 
-  <div class="flex p-10 justify-between">
-    <form class="w-1/2 space-y-6 pr-5" @submit="onSubmit">
-      <FormField v-slot="{ componentField }" name="code">
-        <FormItem>
-          <FormControl>
-            <Textarea placeholder="code à convertir" class="h-64" v-bind="componentField" />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      </FormField>
-      <Button type="submit"> Convertir </Button>
-    </form>
-    <pre class="w-full pl-5">
+
+  <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl gap-16 sm:gap-y-24 flex flex-col">
+    <div class="text-center relative z-[1]">
+      <h1 class="text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Vue options to Vue
+        compositions</h1>
+      <p class="mt-6 text-lg tracking-tight text-gray-600 dark:text-gray-300">
+        Convert your Vue API options code to Vue API compositions with <code>&lt;script setup lang="ts"&gt;</code>.
+      </p>
+      <div class="mt-10 flex flex-wrap gap-x-6 gap-y-3 justify-center">
+
+        <Button type="button">
+          Get Started
+        </Button>
+
+        <Button type="button">
+          What is Nuxt?
+        </Button>
+
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <section class="text-gray-600 body-font">
+    <h1 class="text-center mt-10">Convertir le code Vue API options en code Vue API de compositions</h1>
+    <div v-if="loading">Loading...</div>
+
+    <div class="flex p-10 justify-between">
+      <form class="w-1/2 space-y-6 pr-5" @submit="onSubmit">
+        <FormField v-slot="{ componentField }" name="code">
+          <FormItem>
+            <FormControl>
+              <Textarea placeholder="code à convertir" class="h-64" v-bind="componentField" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+        <Button type="submit"> Convertir </Button>
+      </form>
+      <pre class="w-full pl-5">
     <code>
       {{ formattedCode }}
     </code>
   </pre>
-  </div>
-</section>
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -52,7 +78,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = handleSubmit((values: any) => {
+const onSubmit = handleSubmit((values: any): void => {
   console.log(values.code);
   sendCodeConvertToChatGPT(values.code);
 });
@@ -149,7 +175,7 @@ const sendCodeConvertToChatGPT = async (code: string) => {
   }
 };
 
-watch(convertedCode, (newValue) => {
+watch(convertedCode, (newValue: any) => {
   formattedCode.value = formatCode(newValue);
 });
 </script>
