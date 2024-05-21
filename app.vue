@@ -52,7 +52,7 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema,
 });
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit((values: any) => {
   console.log(values.code);
   sendCodeConvertToChatGPT(values.code);
 });
@@ -79,7 +79,7 @@ const sendCodeConvertToChatGPT = async (code: string) => {
             content: `
             tu es un expert en développement web avec vuejs et nuxtjs.
             Convertis le code Vue.js ou Nuxt.js utilisant l'API options en utilisant l'API de compositions avec le <script setup lang="ts">.
-            Assure-toi d'inclure si nécessaire l'interface Props suivante en adaptant le code en conséquence:
+            Assure-toi d'inclure l'interface Props suivante en adaptant le code en conséquence:
              
             interface Props {
               msg?: string
@@ -95,12 +95,9 @@ const sendCodeConvertToChatGPT = async (code: string) => {
 
             Si besoin de props sans valeur par défaut:
 
-            const props = defineProps<{
-              foo: string
-              bar?: number
-            }>()
+            const props = defineProps<Props>()
 
-            Si besoin de props avec valeur par défaut:
+            Si besoin de props avec valeur par défaut utillise :
           
             withDefaults(defineProps<Props>(), {
               msg: 'hello',
@@ -108,6 +105,10 @@ const sendCodeConvertToChatGPT = async (code: string) => {
               count: () => 0,
               title: () => 'toto'
             }) 
+
+            si besoin de emit:
+
+            const emit = defineEmits(["update:modelValue", "isValid"]);
             
             si besoin de watch et onMounted:
             watch(count, (newCount) => {
@@ -122,9 +123,7 @@ const sendCodeConvertToChatGPT = async (code: string) => {
             si besoin de ref:
             ref('Hello World!')
 
-            N'oublie pas le template si nécessaire.
-            Garde l'ordre des éléments dans le code.
-
+            N'oublie pas le template.
            Fournis uniquement le code converti en réponse, sans aucun texte supplémentaire.`,
           },
           {
