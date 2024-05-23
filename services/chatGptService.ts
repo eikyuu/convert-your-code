@@ -24,6 +24,10 @@ export default (nuxtApp: any) => {
             
             Utile la déclaration basée sur le type.
 
+            Les type sont en JAVASCRIPT.
+
+            ne rajoute plus au import defineProps et defineEmits, ils sont déjà importés par default.
+
             Utilise également les fonctions suivantes comme exemple en les adaptant si nécessaire au code fourni:
 
             Si besoin de props sans valeur par défaut:

@@ -36,11 +36,17 @@
         </FormField>
         <Button type="submit"> Convertir </Button>
       </form>
-      <pre class="w-full pl-5">
-    <code>
-      {{ formattedCode }}
-    </code>
-  </pre>
+
+
+      <div class="w-full pl-5">
+        <Button type="button" @click="copy">C/C</Button>
+        <pre>
+          <code>
+            {{ formattedCode }}
+          </code>
+        </pre>
+      </div>
+
     </div>
   </section>
 </template>
@@ -91,6 +97,7 @@ const formatCode = (code: string) => {
 
 const sendCodeConvertToChatGPT = async (code: string) => {
   loading.value = true;
+  convertedCode.value = "";
   try {
     const response = await apiService.getChatGptResponse(code);
 
@@ -101,6 +108,10 @@ const sendCodeConvertToChatGPT = async (code: string) => {
   } finally {
     loading.value = false;
   }
+};
+
+const copy = () => {
+  navigator.clipboard.writeText(convertedCode.value);
 };
 
 watch(convertedCode, (newValue: any) => {
