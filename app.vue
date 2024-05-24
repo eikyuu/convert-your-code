@@ -1,5 +1,4 @@
 <template>
-
   <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl gap-16 sm:gap-y-24 flex flex-col">
     <div class="text-center relative mt-10">
       <h1 class="text-vue-color text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Vue options to Vue
@@ -38,7 +37,7 @@
       </form>
 
 
-      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-auto">
+      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-au">
         <Button type="button" @click="copy">C/C</Button>
         <div v-if="loading">Loading...</div>
         <pre>
@@ -50,8 +49,6 @@
 
     </div>
   </section>
-
-
 </template>
 
 <script setup lang="ts">
@@ -121,9 +118,3 @@ watch(convertedCode, (newValue: any) => {
   formattedCode.value = formatCode(newValue);
 });
 </script>
-
-<style>
-  .vue-color {
-    color: #41b883;
-  }
-</style>

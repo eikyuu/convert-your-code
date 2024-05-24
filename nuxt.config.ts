@@ -19,10 +19,4 @@ export default defineNuxtConfig({
     componentDir: './components/ui'
   },
   css: ["~/assets/css/tailwind.css"],
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
-  },
 })
