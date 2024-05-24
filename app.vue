@@ -1,8 +1,8 @@
 <template>
 
   <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl gap-16 sm:gap-y-24 flex flex-col">
-    <div class="text-center relative z-[1]">
-      <h1 class="text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Vue options to Vue
+    <div class="text-center relative mt-10">
+      <h1 class="text-vue-color text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Vue options to Vue
         compositions</h1>
       <p class="mt-6 text-lg tracking-tight text-gray-600 dark:text-gray-300">
         Convert your Vue API options code to Vue API compositions with <code>&lt;script setup lang="ts"&gt;</code>.
@@ -22,14 +22,14 @@
   </div>
 
   <section class="text-gray-600 body-font">
-    <div v-if="loading">Loading...</div>
 
-    <div class="flex p-10 justify-between">
-      <form class="w-1/2 space-y-6 pr-5" @submit="onSubmit">
+    <div class="flex justify-between p-10">
+
+      <form class="w-1/2 mr-2 space-y-4" @submit="onSubmit">
         <FormField v-slot="{ componentField }" name="code">
           <FormItem>
             <FormControl>
-              <Textarea placeholder="code à convertir" class="h-64" v-bind="componentField" />
+              <Textarea placeholder="code à convertir" class="h-96 resize-none" v-bind="componentField" />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -38,8 +38,9 @@
       </form>
 
 
-      <div class="w-full pl-5">
+      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-auto">
         <Button type="button" @click="copy">C/C</Button>
+        <div v-if="loading">Loading...</div>
         <pre>
           <code>
             {{ formattedCode }}
@@ -49,6 +50,8 @@
 
     </div>
   </section>
+
+
 </template>
 
 <script setup lang="ts">
@@ -120,15 +123,7 @@ watch(convertedCode, (newValue: any) => {
 </script>
 
 <style>
-textarea {
-  width: 100%;
-  margin-top: 20px;
-}
-
-pre {
-  background-color: #f4f4f4;
-  padding: 20px;
-  border-radius: 5px;
-  margin-top: 20px;
-}
+  .vue-color {
+    color: #41b883;
+  }
 </style>

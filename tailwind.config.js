@@ -16,6 +16,7 @@ module.exports = {
     },
     extend: {
       colors: {
+        'regal-blue': '#243c5',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -49,6 +50,7 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        'vue-color': '#42b883',
       },
       borderRadius: {
       	xl: "calc(var(--radius) + 4px)",
