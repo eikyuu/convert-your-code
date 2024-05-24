@@ -37,7 +37,7 @@
       </form>
 
 
-      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-au">
+      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-auto">
         <Button type="button" @click="copy">C/C</Button>
         <div v-if="loading">Loading...</div>
         <pre>
