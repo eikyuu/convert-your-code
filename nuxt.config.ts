@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     }
   },
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt"],
+  modules: ["@nuxtjs/tailwindcss", "shadcn-nuxt", "nuxt-shiki"],
   shadcn: {
     /**
      * Prefix for all the imported component

@@ -1,12 +1,11 @@
 <template>
   <div class="mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl gap-16 sm:gap-y-24 flex flex-col">
     <div class="text-center relative mt-10">
-      <h1 class="text-vue-color text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Vue options to Vue
-        compositions</h1>
+      <h1 class="text-vue-color text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">Vue Composition API Converter</h1>
       <p class="mt-6 text-lg tracking-tight text-gray-600 dark:text-gray-300">
-        Convert your Vue API options code to Vue API compositions with <code>&lt;script setup lang="ts"&gt;</code>.
+        Convert your Vue 2 Options API code to Vue 3 Composition API with <code>&lt;script setup lang="ts"&gt;</code>.
       </p>
-      <div class="mt-10 flex flex-wrap gap-x-6 gap-y-3 justify-center">
+      <!-- <div class="mt-10 flex flex-wrap gap-x-6 gap-y-3 justify-center">
 
         <Button type="button">
           Get Started
@@ -16,39 +15,39 @@
           Learn More
         </Button>
 
-      </div>
+      </div> -->
     </div>
   </div>
 
+  <hr class="my-10" /> 
+
   <section class="text-gray-600 body-font">
 
-    <div class="flex justify-between p-10">
+    <div class="flex justify-between px-10">
 
       <form class="w-1/2 mr-2 space-y-4" @submit="onSubmit">
         <FormField v-slot="{ componentField }" name="code">
           <FormItem>
             <FormControl>
-              <Textarea placeholder="code à convertir" class="h-96 resize-none" v-bind="componentField" />
+              <Textarea placeholder="Paste your Vue 2 Options API code here" class="h-96 resize-none" v-bind="componentField" />
             </FormControl>
             <FormMessage />
           </FormItem>
         </FormField>
-        <Button type="submit"> Convertir </Button>
+        <Button type="submit">Convertir</Button>
       </form>
 
 
-      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-auto">
-        <Button type="button" @click="copy">C/C</Button>
+      <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-auto flex flex-col">
+        <Button v-if="convertedCode" class="self-end w-auto" type="button" @click="copy">C/C</Button>
         <div v-if="loading">Loading...</div>
-        <pre>
-          <code>
-            {{ formattedCode }}
-          </code>
-        </pre>
+        <p v-if="!loading && !convertedCode" class="text-sm text-gray-600 text-center">Paste your Vue2 Options API code in the left box to see the converted code here</p>
+        <Shiki lang="ts" :code="formattedCode" />
       </div>
 
     </div>
   </section>
+
 </template>
 
 <script setup lang="ts">
@@ -97,21 +96,22 @@ const formatCode = (code: string) => {
 
 const sendCodeConvertToChatGPT = async (code: string) => {
   loading.value = true;
-  convertedCode.value = "";
   try {
     const response = await apiService.getChatGptResponse(code);
-
-    convertedCode.value = response.data.choices[0].message.content;
+    if (response.data && response.data.choices.length > 0) {
+      convertedCode.value = response.data.choices[0].message.content;
+    } else {
+      console.error("No data received from API.");
+    }
   } catch (error) {
     console.error("Error:", error);
-    // Provide user-friendly feedback here
   } finally {
     loading.value = false;
   }
 };
 
-const copy = () => {
-  navigator.clipboard.writeText(convertedCode.value);
+const copy = async () => {
+  await navigator.clipboard.writeText(convertedCode.value);
 };
 
 watch(convertedCode, (newValue: any) => {
