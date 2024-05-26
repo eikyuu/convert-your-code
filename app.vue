@@ -34,7 +34,7 @@
             <FormMessage />
           </FormItem>
         </FormField>
-        <Button type="submit">Convertir</Button>
+        <Button type="submit">Convert</Button>
       </form>
 
 
