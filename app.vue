@@ -39,10 +39,10 @@
 
 
       <div class="h-96 w-1/2 bg-slate-50 p-2 ml-2 overflow-auto flex flex-col">
-        <Button v-if="convertedCode" class="self-end w-auto" type="button" @click="copy">C/C</Button>
+        <Button v-if="convertedCode" class="fixed mt-1 right-16 w-auto" type="button" @click="copy">C/C</Button>
         <div v-if="loading">Loading...</div>
         <p v-if="!loading && !convertedCode" class="text-sm text-gray-600 text-center">Paste your Vue2 Options API code in the left box to see the converted code here</p>
-        <Shiki lang="ts" :code="formattedCode" />
+        <Shiki lang="ts" :code="formattedCode" class="mt-10"/>
       </div>
 
     </div>
@@ -65,6 +65,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import chatGptService from "~/services/chatGptService";
+
 
 const formSchema = toTypedSchema(
   z.object({
@@ -112,6 +113,11 @@ const sendCodeConvertToChatGPT = async (code: string) => {
 
 const copy = async () => {
   await navigator.clipboard.writeText(convertedCode.value);
+  // toast({
+  //   title: "Code copied to clipboard",
+  //   description: "Your code has been copied to your clipboard. You can paste it anywhere.",
+  //   status: "success",
+  // });
 };
 
 watch(convertedCode, (newValue: any) => {
