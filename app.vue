@@ -97,6 +97,7 @@ const formatCode = (code: string) => {
 
 const sendCodeConvertToChatGPT = async (code: string) => {
   loading.value = true;
+  convertedCode.value = "";
   try {
     const response = await apiService.getChatGptResponse(code);
     if (response.data && response.data.choices.length > 0) {
