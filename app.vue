@@ -64,8 +64,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import chatGptService from "~/services/chatGptService";
-
 
 const formSchema = toTypedSchema(
   z.object({
@@ -80,12 +78,10 @@ const { handleSubmit } = useForm({
 });
 
 const onSubmit = handleSubmit((values: any): void => {
-  console.log(values.code);
   sendCodeConvertToChatGPT(values.code);
 });
 const nuxtApp = useNuxtApp(); 
 
-const apiService = chatGptService(nuxtApp);
 
 const convertedCode = ref(``);
 const loading = ref(false);
@@ -96,29 +92,33 @@ const formatCode = (code: string) => {
 };
 
 const sendCodeConvertToChatGPT = async (code: string) => {
+
   loading.value = true;
   convertedCode.value = "";
+
   try {
-    const response = await apiService.getChatGptResponse(code);
-    if (response.data && response.data.choices.length > 0) {
-      convertedCode.value = response.data.choices[0].message.content;
-    } else {
-      console.error("No data received from API.");
-    }
+    const response = await useFetch('/api/chat-gpt', {
+      method: 'POST',
+      body: JSON.stringify({ code })
+    });
+
+  if (response.data.value) {
+    convertedCode.value = response.data.value;
+  } else {
+    console.error("No data received from API.");
+  }
+
   } catch (error) {
     console.error("Error:", error);
+
   } finally {
     loading.value = false;
   }
+
 };
 
 const copy = async () => {
   await navigator.clipboard.writeText(convertedCode.value);
-  // toast({
-  //   title: "Code copied to clipboard",
-  //   description: "Your code has been copied to your clipboard. You can paste it anywhere.",
-  //   status: "success",
-  // });
 };
 
 watch(convertedCode, (newValue: any) => {
